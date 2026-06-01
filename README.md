@@ -6,9 +6,10 @@ Pet project for learning .NET microservices
 
 ## Key technologies for .NET microservices in 2026
 
-* Language: C# (.NET 9)
+* Language: C# (.NET 10)
 * Containerization: Docker, Docker Compose
-* Orchestration: Kubernetes (K8s)
+* Local orchestration & dev dashboard: .NET Aspire
+* Orchestration (production): Kubernetes (K8s)
 * API Gateway: YARP (Yet Another Reverse Proxy) or Ocelot
 * Message Broker: RabbitMQ or Apache Kafka
 * Service Mesh: maybe Dapr
@@ -24,7 +25,7 @@ Pet project for learning .NET microservices
 
 ## Services
 
-* Identitiy
+* Identity
 * Catalog
 * Orders
 * Payment
