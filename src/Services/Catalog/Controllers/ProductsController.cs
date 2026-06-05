@@ -1,63 +1,66 @@
-﻿using Catalog.Models;
+﻿using Catalog.Data;
+using Catalog.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductsController : ControllerBase
+    public class ProductsController(CatalogDbContext context) : ControllerBase
     {
-        private static readonly List<Product> _products = [
-            new Product { Id = 1, Name = "Green Apple", Category = "Fruits", Description = "Green colored Apple", Price = 20.0M, Stock = 10},
-            new Product { Id = 2, Name = "Toy car", Category = "Toys", Description = "Toy Mazda RX-7 model", Price = 100.0M, Stock = 20},
-            new Product { Id = 3, Name = "Ascorbic acid", Category = "Medicine", Description = "Round yellow tablets", Price = 5.0M, Stock = 30}
-            ];
+        private readonly CatalogDbContext _context = context;
 
         [HttpPost]
-        public ActionResult<Product> Create([FromBody] Product product)
+        public async Task<ActionResult<Product>> Create([FromBody] Product product)
         {
-            product.Id = _products.Select(p => p.Id).DefaultIfEmpty(0).Max() + 1;
-            _products.Add(product);
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> Get() => Ok(_products);
+        public async Task<ActionResult<IEnumerable<Product>>> Get()
+        {
+            return Ok(await _context.Products.ToListAsync());
+        }
 
         [HttpGet("{id}")]
-        public ActionResult<Product> GetById(int id)
+        public async Task<ActionResult<Product>> GetById(int id)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
-            if (product is null) 
+            var product = await _context.Products.FindAsync(id);
+            if (product is null)
                 return NotFound();
-            
+
             return Ok(product);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Product> Update(int id, [FromBody] Product updatedProduct)
+        public async Task<ActionResult<Product>> Update(int id, [FromBody] Product updatedProduct)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
+            var product = await _context.Products.FindAsync(id);
             if (product is null)
                 return NotFound();
-            
+
             product.Name = updatedProduct.Name;
             product.Category = updatedProduct.Category;
             product.Description = updatedProduct.Description;
             product.Price = updatedProduct.Price;
             product.Stock = updatedProduct.Stock;
+            await _context.SaveChangesAsync();
 
             return Ok(product);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
+            var product = await _context.Products.FindAsync(id);
             if (product is null)
                 return NotFound();
 
-            _products.Remove(product);
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }
