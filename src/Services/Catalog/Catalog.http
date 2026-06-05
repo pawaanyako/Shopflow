@@ -1,0 +1,50 @@
+@Catalog_HostAddress = http://localhost:5279
+
+###
+POST {{Catalog_HostAddress}}/products
+Content-Type: application/json
+
+{
+  "name": "Banana",
+  "category": "Fruits",
+  "description": "Yellow",
+  "price": 15.0,
+  "stock": 5
+}
+
+###
+GET {{Catalog_HostAddress}}/products
+Accept: application/json
+
+###
+GET {{Catalog_HostAddress}}/products/1
+Accept: application/json
+
+###
+PUT {{Catalog_HostAddress}}/products/1
+Content-Type: application/json
+
+{
+  "id": 999,
+  "name": "Red Apple",
+  "category": "Fruits",
+  "description": "Now it is red",
+  "price": 25.0,
+  "stock": 8
+}
+
+###
+PUT {{Catalog_HostAddress}}/products/999
+Content-Type: application/json
+
+{
+  "id": 666,
+  "name": "Ghost",
+  "category": "None",
+  "description": "Does not exist",
+  "price": 1.0,
+  "stock": 0
+}
+
+###
+DELETE {{Catalog_HostAddress}}/products/1
